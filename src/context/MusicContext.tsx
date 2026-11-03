@@ -7,6 +7,7 @@ const STORAGE_KEY = 'jps_portfolio_music';
 
 const VOLUME = 0.22; // The master is very loud, so this keeps it behind the page
 const FADE_IN_SECONDS = 1.8;
+const START_FADE_SECONDS = 0.05; // The track opens on a spoken line, so don't fade over it
 const FADE_OUT_SECONDS = 0.7;
 const OPEN_FREQUENCY = 20000;
 const MUFFLED_FREQUENCY = 500;
@@ -70,8 +71,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         .catch(() => {
           // Picked up again by the next click or key press
         });
-      rampTo(engine.gain.gain, VOLUME, FADE_IN_SECONDS, now);
-      rampTo(engine.filter.frequency, OPEN_FREQUENCY, FADE_IN_SECONDS, now);
+      const fadeIn = audio.currentTime < 0.5 ? START_FADE_SECONDS : FADE_IN_SECONDS;
+      rampTo(engine.gain.gain, VOLUME, fadeIn, now);
+      rampTo(engine.filter.frequency, OPEN_FREQUENCY, fadeIn, now);
       setStatus('playing');
     } else {
       rampTo(engine.gain.gain, 0, FADE_OUT_SECONDS, now);
