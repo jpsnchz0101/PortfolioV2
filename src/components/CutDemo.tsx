@@ -96,7 +96,7 @@ export const CutDemo: React.FC = () => {
   const [scrubbed, setScrubbed] = useState<number>(0);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end end'] });
 
-  useMotionValueEvent(scrollYProgress, 'change', (value) => setScrubbed(Math.round(value * 500) / 500));
+  useMotionValueEvent(scrollYProgress, 'change', (value) => setScrubbed(Math.round(value * 300) / 300));
 
   const p = reduced ? 1 : scrubbed;
   const flag = ramp(p, 0.04, 0.18);
@@ -117,10 +117,10 @@ export const CutDemo: React.FC = () => {
     <section
       ref={sectionRef}
       id="cut"
-      className={`relative z-10 font-mono ${reduced ? 'py-16' : 'h-[420vh]'}`}
+      className={`relative z-10 font-mono ${reduced ? 'py-16' : 'h-[320vh] md:h-[420vh]'}`}
       aria-label="A demonstration of how a clip gets edited"
     >
-      <div className={`${reduced ? '' : 'sticky top-0 h-screen'} overflow-hidden flex flex-col justify-center gap-3 sm:gap-5 px-4 sm:px-8 pt-14 pb-16`}>
+      <div className={`${reduced ? '' : 'sticky top-0 h-svh'} overflow-hidden flex flex-col justify-center gap-3 sm:gap-5 px-4 sm:px-8 pt-14 pb-16`}>
         {/* Heading */}
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
           <div>
@@ -144,7 +144,7 @@ export const CutDemo: React.FC = () => {
           </div>
 
           {/* Stage + transcript */}
-          <div className="min-w-0 flex flex-col justify-center gap-2 sm:gap-4">
+          <div className="min-w-0 flex flex-col justify-start sm:justify-center gap-2 sm:gap-4">
             <div className="flex gap-1" aria-hidden="true">
               {CUT_STAGES.map((item, i) => (
                 <span
@@ -154,7 +154,7 @@ export const CutDemo: React.FC = () => {
               ))}
             </div>
 
-            <div aria-live="polite">
+            <div aria-live="polite" className="min-h-[104px] sm:min-h-[84px]">
               <h3
                 style={{ fontVariationSettings: '"wdth" 100, "wght" 800' }}
                 className="font-display text-[min(6vw,clamp(20px,4vh,44px))] text-[var(--accent-code)]"
@@ -164,7 +164,7 @@ export const CutDemo: React.FC = () => {
               <p className="text-[11px] sm:text-[13px] leading-snug text-[var(--text-secondary)] mt-1">{stage.note}</p>
             </div>
 
-            <p className="text-[12px] sm:text-[clamp(14px,2.6vh,22px)] leading-relaxed text-[var(--text-primary)]">
+            <p className="min-h-[8.2em] sm:min-h-[3.3em] text-[12px] sm:text-[clamp(14px,2.6vh,22px)] leading-relaxed text-[var(--text-primary)]">
               {CUT_WORDS.map((word, i) => {
                 if (word.filler) {
                   if (cut >= 1) return null;

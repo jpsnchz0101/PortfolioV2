@@ -59,7 +59,7 @@ export const SoundToggle: React.FC = () => {
       data-music-status={status}
       data-cursor={isOn ? 'Mute (M)' : 'Sound on (M)'}
       title="Music: Playboi Carti, Magnolia"
-      className={`relative h-8 flex items-center gap-2 px-2 border bg-[var(--bg-primary)]/80 backdrop-blur-sm text-[11px] font-mono transition-colors cursor-pointer ${
+      className={`relative h-8 flex items-center gap-2 px-2 border bg-[var(--bg-primary)]/90 text-[11px] font-mono transition-colors cursor-pointer ${
         status === 'idle'
           ? 'border-[var(--accent-code)] text-[var(--text-primary)]'
           : 'border-[var(--border-subtle)] hover:border-[var(--accent-code)] text-[var(--text-secondary)]'

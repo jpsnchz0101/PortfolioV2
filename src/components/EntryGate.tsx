@@ -45,7 +45,7 @@ export const EntryGate: React.FC = () => {
           : `clip-path ${CLOSE_MS}ms cubic-bezier(0.76, 0, 0.24, 1)`,
         pointerEvents: phase === 'open' ? 'auto' : 'none',
       }}
-      className="fixed inset-0 z-[55] flex flex-col bg-[var(--bg-primary)] font-mono cursor-pointer"
+      className="fixed inset-0 z-[55] flex flex-col bg-[var(--bg-primary)] font-mono cursor-pointer touch-none"
     >
       {/* Clapper stripes */}
       <div

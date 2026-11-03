@@ -3,6 +3,8 @@ import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useScroll,
 import { ArrowUp, ArrowUpRight, Check, Copy, Mail } from 'lucide-react';
 import { CTA_EMAIL_BODY, CTA_EMAIL_SUBJECT, PERSONAL_INFO } from '../data/portfolioData';
 
+const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
+
 const MAILTO_URL = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(
   CTA_EMAIL_SUBJECT
 )}&body=${encodeURIComponent(CTA_EMAIL_BODY)}`;
@@ -67,7 +69,7 @@ export const CtaSection: React.FC = () => {
 
   return (
     <section ref={sectionRef} id="contact" className={`relative z-10 ${reduced ? '' : 'h-[160vh]'}`}>
-      <div className={`${reduced ? 'min-h-screen' : 'sticky top-0 h-screen'} overflow-hidden`}>
+      <div className={`${reduced ? 'min-h-svh' : 'sticky top-0 h-svh'} overflow-hidden`}>
         <motion.div
           style={reduced ? undefined : { clipPath }}
           className="absolute inset-0 flex flex-col bg-[var(--accent-code)] text-[var(--accent-ink)] font-mono"
@@ -75,7 +77,7 @@ export const CtaSection: React.FC = () => {
           <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center px-4 pt-14">
             <p className="text-xs sm:text-sm mb-3 sm:mb-5">&gt; thanks for watching</p>
             <motion.h2
-              style={reduced ? undefined : { scale: headlineScale, fontVariationSettings: fontVariation }}
+              style={reduced ? undefined : { scale: headlineScale, fontVariationSettings: IS_TOUCH ? '"wdth" 84, "wght" 900' : fontVariation }}
               className="font-display text-[min(19vw,25vh)] mb-5 sm:mb-8"
             >
               Got

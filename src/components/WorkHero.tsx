@@ -20,6 +20,7 @@ const cleanBase = base.endsWith('/') ? base : `${base}/`;
 const reelSrc = (reel: ShowcaseReel) => `${cleanBase}video/${reel.index}.mp4`;
 const reelPoster = (reel: ShowcaseReel) => `${cleanBase}video/posters/${reel.index}_poster.jpg`;
 
+const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
 const REEL_COUNT = SHOWCASE_REELS.length;
 const MID = (REEL_COUNT - 1) / 2;
 
@@ -33,9 +34,19 @@ interface Stage {
   stripStep: number;
 }
 
+/** Height with the mobile address bar showing. It stays put as the bar slides away. */
+function stableViewportHeight(): number {
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;top:0;width:0;height:100svh;visibility:hidden';
+  document.body.appendChild(probe);
+  const height = probe.getBoundingClientRect().height;
+  probe.remove();
+  return height || window.innerHeight;
+}
+
 function measureStage(): Stage {
   const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vh = stableViewportHeight();
   const cardH = Math.max(240, Math.min(vh * 0.5, 520));
   const cardW = (cardH * 9) / 16;
   const fanStep = Math.min(cardW * 0.62, (vw - cardW - 24) / (REEL_COUNT - 1));
@@ -43,13 +54,14 @@ function measureStage(): Stage {
   return { vw, vh, cardH, cardW, fanStep, stripScale, stripStep: cardW * stripScale * 0.86 + 20 };
 }
 
-/** Measures the stage. Ignores mobile address-bar height changes so the pin doesn't jump. */
+/** Measures the stage, keeping the same object unless the size really changed. */
 function useStage(): Stage {
   const [stage, setStage] = useState<Stage>(measureStage);
 
   useEffect(() => {
     const handleResize = () => {
-      setStage((prev) => (window.innerWidth === prev.vw && Math.abs(window.innerHeight - prev.vh) < 120 ? prev : measureStage()));
+      const next = measureStage();
+      setStage((prev) => (prev.vw === next.vw && prev.vh === next.vh ? prev : next));
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -107,13 +119,17 @@ const ReelCardFace: React.FC<ReelVideoProps> = ({ reel, shouldPlay }) => {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (shouldPlay) {
+    if (!shouldPlay) {
+      video.pause();
+      return;
+    }
+    // Starting a video stalls the page on phones, so wait until the scroll settles on it
+    const timer = window.setTimeout(() => {
       video.play().catch(() => {
         // Autoplay blocked: the poster stays up and the lightbox still works
       });
-    } else {
-      video.pause();
-    }
+    }, IS_TOUCH ? 180 : 0);
+    return () => window.clearTimeout(timer);
   }, [shouldPlay]);
 
   return (
@@ -129,10 +145,10 @@ const ReelCardFace: React.FC<ReelVideoProps> = ({ reel, shouldPlay }) => {
         preload="metadata"
         tabIndex={-1}
       />
-      <span className="absolute top-2.5 left-2.5 px-1.5 py-0.5 bg-black/70 backdrop-blur-sm border border-white/20 text-[9px] uppercase tracking-wider text-white">
+      <span className="absolute top-2.5 left-2.5 px-1.5 py-0.5 bg-black/70 border border-white/20 text-[9px] uppercase tracking-wider text-white">
         {reel.format}
       </span>
-      <span className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/70 backdrop-blur-sm border border-white/20 text-white">
+      <span className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-black/70 border border-white/20 text-white">
         <Volume2 className="w-3 h-3" aria-hidden="true" />
       </span>
       <span className="absolute inset-x-0 bottom-0 p-3 pt-10 bg-gradient-to-t from-black/95 via-black/70 to-transparent text-white">
@@ -167,6 +183,7 @@ const PinnedCard: React.FC<PinnedCardProps> = ({ reel, index, stage, spread, pan
   });
   const rotateZ = useTransform(spread, (t: number) => (1 - t) * offset * 5);
   const rotateY = useTransform<number, number>([spread, x], ([t, currentX]) => {
+    if (IS_TOUCH) return 0;
     const distance = Math.max(-1.4, Math.min(1.4, currentX / stripStep));
     return t * distance * -24;
   });
@@ -175,7 +192,10 @@ const PinnedCard: React.FC<PinnedCardProps> = ({ reel, index, stage, spread, pan
     const nearCenter = Math.min(1, Math.abs(currentX) / (stripStep * 1.2));
     return mix(fanScale, stripScale * (1 - 0.16 * nearCenter), t);
   });
-  const zIndex = useTransform(x, (currentX) => Math.round(200 - Math.abs(currentX + 1) / 8));
+  // Stepped, so the stacking order only recalculates when two cards actually swap
+  const zIndex = useTransform<number, number>([spread, x], ([t, currentX]) =>
+    Math.round(200 - (Math.abs(currentX + 1) * 2) / mix(fanStep, stripStep, t))
+  );
 
   return (
     <motion.button
@@ -184,7 +204,7 @@ const PinnedCard: React.FC<PinnedCardProps> = ({ reel, index, stage, spread, pan
       aria-label={`Play ${reel.title} with sound`}
       data-cursor="Watch with sound"
       style={{ x, y, rotateZ, rotateY, scale, zIndex, width: cardW, height: cardH, marginLeft: -cardW / 2, marginTop: -cardH / 2 }}
-      className="absolute top-0 left-1/2 rounded-2xl overflow-hidden border border-white/20 hover:border-[var(--accent-glow)] focus-visible:border-[var(--accent-glow)] bg-[#0d1017] text-left cursor-pointer shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition-[border-color]"
+      className="absolute top-0 left-1/2 rounded-2xl overflow-hidden border border-white/20 hover:border-[var(--accent-glow)] focus-visible:border-[var(--accent-glow)] bg-[#0d1017] text-left cursor-pointer sm:shadow-[0_24px_60px_rgba(0,0,0,0.45)] transition-[border-color]"
     >
       <ReelCardFace reel={reel} shouldPlay={shouldPlay} />
     </motion.button>
@@ -208,9 +228,19 @@ const HeroCopy: React.FC<{ rotatingWord: string }> = ({ rotatingWord }) => (
 
 const Lightbox: React.FC<{ reel: ShowcaseReel; onClose: () => void }> = ({ reel, onClose }) => {
   const { duck } = useMusic();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Background music fades out while a reel plays with sound, then fades back in
   useEffect(() => duck(), [duck]);
+
+  // iPhones can ignore autoPlay with sound, so ask directly and fall back to muted
+  useEffect(() => {
+    const video = videoRef.current;
+    video?.play().catch(() => {
+      video.muted = true;
+      video.play().catch(() => undefined);
+    });
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -224,7 +254,7 @@ const Lightbox: React.FC<{ reel: ShowcaseReel; onClose: () => void }> = ({ reel,
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/90"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -237,6 +267,7 @@ const Lightbox: React.FC<{ reel: ShowcaseReel; onClose: () => void }> = ({ reel,
         className="relative h-full max-h-[min(88svh,780px)] max-w-full aspect-[9/16] rounded-2xl overflow-hidden border border-white/25 bg-black"
       >
         <video
+          ref={videoRef}
           src={reelSrc(reel)}
           poster={reelPoster(reel)}
           className="absolute inset-0 w-full h-full object-contain"
@@ -314,9 +345,8 @@ export const WorkHero: React.FC = () => {
   const ghostX = useTransform(pan, [0, 1], ['6%', '-46%']);
 
   // Only decode videos near the focused reel, and none off-screen
-  useMotionValueEvent(pan, 'change', (value) => {
-    const next = spread.get() < 0.6 ? 2 : Math.round(value * (REEL_COUNT - 1));
-    setFocusIndex(next);
+  useMotionValueEvent(progress, 'change', () => {
+    setFocusIndex(spread.get() < 0.6 ? 2 : Math.round(pan.get() * (REEL_COUNT - 1)));
   });
 
   useEffect(() => {
@@ -327,7 +357,7 @@ export const WorkHero: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  const playRadius = stage.vw < 768 ? 1 : 2;
+  const playRadius = stage.vw < 768 ? 0 : IS_TOUCH ? 1 : 2;
 
   if (reduced) {
     return (
@@ -339,8 +369,8 @@ export const WorkHero: React.FC = () => {
   }
 
   return (
-    <section ref={sectionRef} id="work" className="relative z-10 h-[420vh]" aria-label="Selected video work">
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <section ref={sectionRef} id="work" className="relative z-10 h-[320vh] md:h-[420vh]" aria-label="Selected video work">
+      <div className="sticky top-0 h-svh overflow-hidden">
         {/* Ghost type that pans against the filmstrip */}
         <motion.div
           style={{ opacity: labelOpacity, x: ghostX, fontVariationSettings: '"wdth" 110, "wght" 850' }}
@@ -363,7 +393,7 @@ export const WorkHero: React.FC = () => {
                     initial={{ y: '105%' }}
                     animate={{ y: 0 }}
                     transition={{ duration: 0.7, delay: 0.05 + i * 0.09, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ fontVariationSettings: fontVariation, display: 'block' }}
+                    style={{ fontVariationSettings: IS_TOUCH ? `"wdth" ${baseWidth}, "wght" 850` : fontVariation, display: 'block' }}
                     className={i === 1 ? 'text-[var(--accent-code)]' : ''}
                   >
                     {line}
@@ -383,7 +413,7 @@ export const WorkHero: React.FC = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0 z-10"
-          style={{ perspective: 1400 }}
+          style={{ perspective: IS_TOUCH ? undefined : 1400 }}
         >
           {SHOWCASE_REELS.map((reel, i) => (
             <PinnedCard

@@ -129,7 +129,7 @@ export const TimelineHud: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 h-12 sm:h-13 flex items-center gap-2 sm:gap-3 px-2 sm:px-4 font-mono border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]/90 backdrop-blur-md">
+    <div className="fixed bottom-0 inset-x-0 z-40 h-12 sm:h-13 flex items-center gap-2 sm:gap-3 px-2 sm:px-4 font-mono border-t border-[var(--border-subtle)] bg-[var(--bg-primary)]/95">
       <button
         type="button"
         onClick={() => setRate((r) => (r === 0 ? 1 : 0))}

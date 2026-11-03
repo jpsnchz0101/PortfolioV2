@@ -10,6 +10,9 @@ const FADE_IN_SECONDS = 1.8;
 const START_FADE_SECONDS = 0.05; // The track opens on a spoken line, so don't fade over it
 const FADE_OUT_SECONDS = 0.7;
 const OPEN_FREQUENCY = 20000;
+// In-app browsers on phones can report no focus forever, so phones rely on visibility alone
+const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
+const pageHasFocus = () => IS_TOUCH || document.hasFocus();
 const MUFFLED_FREQUENCY = 500;
 
 export type MusicStatus = 'idle' | 'playing' | 'ducked' | 'off';
@@ -59,7 +62,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!engine || !audio) return;
 
     const now = engine.context.currentTime;
-    const audible = enabledRef.current && duckCountRef.current === 0 && !document.hidden && document.hasFocus();
+    const audible = enabledRef.current && duckCountRef.current === 0 && !document.hidden && pageHasFocus();
 
     if (audible) {
       engine.context.resume();
@@ -166,9 +169,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Stop when the visitor moves to another app or window. Embedded views can be
     // hidden without any visibility or blur event, so this also polls.
-    let wasFocused = document.hasFocus();
+    let wasFocused = pageHasFocus();
     const checkFocus = () => {
-      const focused = document.hasFocus();
+      const focused = pageHasFocus();
       if (focused !== wasFocused) {
         wasFocused = focused;
         sync();

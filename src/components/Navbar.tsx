@@ -14,7 +14,7 @@ export const Navbar: React.FC = () => {
       >
         <a
           href="#work"
-          className="pointer-events-auto flex items-center gap-2 px-2 py-1 bg-[var(--bg-primary)]/80 backdrop-blur-sm text-[var(--text-primary)]"
+          className="pointer-events-auto flex items-center gap-2 px-2 py-1 bg-[var(--bg-primary)]/90 text-[var(--text-primary)]"
         >
           <span className="w-2 h-2 rounded-full bg-[var(--cut)] animate-pulse" aria-hidden="true" />
           <span className="font-semibold text-sm tracking-tight">jpsnchz</span>
@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
             type="button"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            className="w-8 h-8 flex items-center justify-center border border-[var(--border-subtle)] bg-[var(--bg-primary)]/80 backdrop-blur-sm hover:border-[var(--accent-code)] text-[var(--text-primary)] transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center border border-[var(--border-subtle)] bg-[var(--bg-primary)]/90 hover:border-[var(--accent-code)] text-[var(--text-primary)] transition-colors cursor-pointer"
           >
             {theme === 'dark' ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
           </button>

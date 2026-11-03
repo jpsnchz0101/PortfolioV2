@@ -37,7 +37,11 @@ export const SignalField: React.FC = () => {
     });
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+
     const resize = () => {
+      // Phones fire resize when the address bar slides, which must not reset the field
+      if (nodes.length && isTouch && window.innerWidth === width) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = window.innerWidth;
       height = window.innerHeight;
@@ -88,7 +92,14 @@ export const SignalField: React.FC = () => {
       }
     }
 
+    let skipFrame = false;
     const frame = () => {
+      // Half the frame rate on phones: the field is background, the reels come first
+      skipFrame = isTouch && !skipFrame;
+      if (skipFrame) {
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const scrollY = window.scrollY;
       const delta = scrollY - lastScroll;
       lastScroll = scrollY;
