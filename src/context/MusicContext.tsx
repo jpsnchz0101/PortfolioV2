@@ -23,6 +23,7 @@ interface MusicEngine {
 interface MusicContextType {
   status: MusicStatus;
   toggle: () => void;
+  enter: (withSound: boolean) => void;
   getAnalyser: () => AnalyserNode | null;
   duck: () => () => void;
 }
@@ -129,6 +130,17 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     else sync();
   }, [start, sync]);
 
+  // The choice made on the entry screen, which also counts as the first click
+  const enter = useCallback(
+    (withSound: boolean) => {
+      enabledRef.current = withSound;
+      localStorage.setItem(STORAGE_KEY, withSound ? 'on' : 'off');
+      if (withSound) start();
+      else sync();
+    },
+    [start, sync]
+  );
+
   const duck = useCallback(() => {
     duckCountRef.current += 1;
     sync();
@@ -179,7 +191,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [start, sync, toggle]);
 
-  const value = useMemo(() => ({ status, toggle, getAnalyser, duck }), [status, toggle, getAnalyser, duck]);
+  const value = useMemo(() => ({ status, toggle, enter, getAnalyser, duck }), [status, toggle, enter, getAnalyser, duck]);
 
   return (
     <MusicContext.Provider value={value}>

@@ -4,6 +4,7 @@ import { MusicProvider } from './context/MusicContext';
 import { SignalField } from './components/SignalField';
 import { CustomCursor } from './components/CustomCursor';
 import { TimelineHud } from './components/TimelineHud';
+import { EntryGate } from './components/EntryGate';
 import { Navbar } from './components/Navbar';
 import { WorkHero } from './components/WorkHero';
 import { CutDemo } from './components/CutDemo';
@@ -16,6 +17,7 @@ import { CtaSection } from './components/CtaSection';
 export function AppContent() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] relative selection:bg-[var(--accent-code)] selection:text-[var(--accent-ink)]">
+      <EntryGate />
       <SignalField />
       <div className="film-grain" aria-hidden="true" />
       <CustomCursor />
