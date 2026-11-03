@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow build / cache artifacts
+Disallow: /dist/
+Disallow: /node_modules/
+
+# Sitemaps
+Sitemap: https://jpsnchz.dev/sitemap.xml
