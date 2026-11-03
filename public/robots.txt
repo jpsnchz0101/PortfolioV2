@@ -6,4 +6,4 @@ Disallow: /dist/
 Disallow: /node_modules/
 
 # Sitemaps
-Sitemap: https://jpsnchz.dev/sitemap.xml
+Sitemap: https://jpsnchz0101.github.io/PortfolioV2/sitemap.xml
