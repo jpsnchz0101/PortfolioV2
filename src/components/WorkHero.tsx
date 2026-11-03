@@ -352,8 +352,11 @@ export const WorkHero: React.FC = () => {
 
         {/* Headline */}
         <motion.div style={{ opacity: headlineOpacity, y: headlineY }} className="absolute inset-x-0 top-14 px-4 sm:px-8 z-[5]">
-          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-3">
-            <h1 className="text-[min(15.5vw,17vh)] font-display text-[var(--text-primary)]" aria-label="Stop the scroll.">
+          <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-3">
+            <h1
+              className="flex-none whitespace-nowrap text-[min(15.5vw,max(36px,calc((50vh-190px)/1.72)))] xl:text-[min(15.5vw,17vh)] font-display text-[var(--text-primary)]"
+              aria-label="Stop the scroll."
+            >
               {['Stop the', 'scroll.'].map((line, i) => (
                 <span key={line} className="block overflow-hidden pb-[0.04em]" aria-hidden="true">
                   <motion.span
@@ -368,7 +371,7 @@ export const WorkHero: React.FC = () => {
                 </span>
               ))}
             </h1>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="lg:pt-3">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="xl:pt-3">
               <HeroCopy rotatingWord={rotatingWord} />
             </motion.div>
           </div>
