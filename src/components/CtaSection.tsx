@@ -1,16 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionTemplate, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react';
 import { ArrowUp, ArrowUpRight, Check, Copy, Mail } from 'lucide-react';
-import { CTA_EMAIL_BODY, CTA_EMAIL_SUBJECT, PERSONAL_INFO } from '../data/portfolioData';
+import { INSTAGRAM_DM_URL, PERSONAL_INFO, SERVICES } from '../data/portfolioData';
 
 const IS_TOUCH = window.matchMedia('(pointer: coarse)').matches;
 
-const MAILTO_URL = `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(
-  CTA_EMAIL_SUBJECT
-)}&body=${encodeURIComponent(CTA_EMAIL_BODY)}`;
+const CTA_LABELS: Record<string, string> = {
+  editing: 'Email about video editing',
+  social: 'Email about social media',
+};
 
-/** The big button leans toward the pointer. */
-const MagneticButton: React.FC = () => {
+/** A big button that leans toward the pointer. */
+const MagneticButton: React.FC<{ href: string; label: string; primary: boolean }> = ({ href, label, primary }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const springX = useSpring(x, { stiffness: 220, damping: 16 });
@@ -30,15 +31,19 @@ const MagneticButton: React.FC = () => {
 
   return (
     <motion.a
-      href={MAILTO_URL}
+      href={href}
       onPointerMove={handleMove}
       onPointerLeave={handleLeave}
       style={{ x: springX, y: springY }}
       data-cursor="Open your email"
-      className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-[var(--bg-primary)] text-[var(--text-primary)] font-mono font-bold text-sm sm:text-lg hover:bg-black hover:text-white transition-colors"
+      className={`inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 sm:px-9 py-4 sm:py-5 font-mono font-bold text-sm sm:text-base transition-colors ${
+        primary
+          ? 'bg-[var(--bg-primary)] text-[var(--text-primary)] hover:bg-black hover:text-white'
+          : 'border-2 border-current hover:bg-[var(--bg-primary)] hover:text-[var(--text-primary)]'
+      }`}
     >
       <Mail className="w-5 h-5" aria-hidden="true" />
-      <span>Email me your project</span>
+      <span>{label}</span>
     </motion.a>
   );
 };
@@ -85,19 +90,23 @@ export const CtaSection: React.FC = () => {
               footage?
             </motion.h2>
             <p className="max-w-[480px] text-xs sm:text-sm leading-relaxed mb-6 sm:mb-8">
-              Or a page that needs running. This opens an email with the few details I'll need to reply
-              properly.
+              Or a page that needs running. Pick the service you need, and the email opens with the few
+              details I'll need to reply properly.
             </p>
 
-            <MagneticButton />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+              {SERVICES.map((service, i) => (
+                <MagneticButton key={service.id} href={service.mailto} label={CTA_LABELS[service.id]} primary={i === 0} />
+              ))}
+            </div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mt-5 text-xs">
               <button type="button" onClick={handleCopyEmail} className="flex items-center gap-1.5 underline-offset-2 hover:underline cursor-pointer">
                 {copied ? <Check className="w-3.5 h-3.5" aria-hidden="true" /> : <Copy className="w-3.5 h-3.5" aria-hidden="true" />}
                 <span>{copied ? 'Copied!' : PERSONAL_INFO.email}</span>
               </button>
-              <a href={instagram.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline-offset-2 hover:underline">
-                <span>{instagram.handle}</span>
+              <a href={INSTAGRAM_DM_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 underline-offset-2 hover:underline">
+                <span>DM {instagram.handle} on Instagram</span>
                 <ArrowUpRight className="w-3 h-3" aria-hidden="true" />
               </a>
             </div>

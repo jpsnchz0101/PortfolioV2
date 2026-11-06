@@ -8,7 +8,7 @@ const cleanBase = base.endsWith('/') ? base : `${base}/`;
 const PHOTO_SRC = `${cleanBase}profile-800.jpg`;
 
 const ASCII_RAMP = ' .:-=+*#%@';
-const BIO = `I'm ${PERSONAL_INFO.name}, a video editor and social media manager from Manila, and a Computer Engineering student. I work remotely in CapCut, After Effects and Canva.`;
+const BIO = `I'm ${PERSONAL_INFO.name}, a short-form video editor and social media manager from Manila, and a Computer Engineering student. I work fully remote, and you can hire me for either service on its own.`;
 
 /** Draws the portrait as type, using the same ASCII treatment as the After Effects reel. */
 function useAsciiPortrait(canvasRef: React.RefObject<HTMLCanvasElement | null>) {
@@ -101,7 +101,7 @@ export const AboutSection: React.FC = () => {
   return (
     <section id="about" className="relative z-10 px-4 sm:px-8 py-16 sm:py-24 font-mono scroll-mt-14">
       <p className="text-[11px] text-[var(--text-secondary)] mb-8">
-        <span className="text-[var(--accent-code)] font-bold">SEQ 05</span> / the editor
+        <span className="text-[var(--accent-code)] font-bold">SEQ 06</span> / the editor
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)] gap-8 lg:gap-16 items-center">

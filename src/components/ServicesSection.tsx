@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, MotionValue, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
 import { AUDIENCES, SAMPLE_MONTH, SERVICES } from '../data/portfolioData';
 
 const base = import.meta.env.BASE_URL || '/';
@@ -128,12 +129,16 @@ export const ServicesSection: React.FC = () => {
       </p>
       <h2
         style={{ fontVariationSettings: '"wdth" 88, "wght" 850' }}
-        className="font-display text-[clamp(44px,10vw,128px)] text-[var(--text-primary)] mb-10 sm:mb-16"
+        className="font-display text-[clamp(44px,10vw,128px)] text-[var(--text-primary)] mb-5"
       >
-        Two ways
+        Two services.
         <br />
-        <span className="text-outline">I can help.</span>
+        <span className="text-outline">Hire either one.</span>
       </h2>
+      <p className="max-w-[560px] text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] mb-10 sm:mb-16">
+        Video editing and social media management are booked separately. You don't need one to hire me
+        for the other.
+      </p>
 
       <div className="space-y-14 sm:space-y-24">
         {SERVICES.map((service, i) => (
@@ -142,7 +147,7 @@ export const ServicesSection: React.FC = () => {
             className={`flex flex-col gap-8 lg:gap-16 lg:items-center lg:justify-between ${i % 2 ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}
           >
             <Reveal className="lg:max-w-[560px]">
-              <span className="block text-xs font-bold text-[var(--accent-code)] mb-3">0{i + 1}</span>
+              <span className="block text-xs font-bold text-[var(--accent-code)] mb-3">Service 0{i + 1}</span>
               <h3
                 style={{ fontVariationSettings: '"wdth" 92, "wght" 800' }}
                 className="font-display text-[clamp(30px,5vw,60px)] text-[var(--text-primary)] mb-4"
@@ -150,7 +155,7 @@ export const ServicesSection: React.FC = () => {
                 {service.title}
               </h3>
               <p className="text-sm sm:text-base leading-relaxed text-[var(--text-secondary)] mb-5">{service.summary}</p>
-              <ul className="space-y-2.5 list-none text-xs sm:text-sm text-[var(--text-secondary)]">
+              <ul className="space-y-2.5 list-none text-xs sm:text-sm text-[var(--text-secondary)] mb-6">
                 {service.bullets.map((bullet) => (
                   <li key={bullet} className="flex gap-2.5">
                     <span className="text-[var(--accent-code)]" aria-hidden="true">&gt;</span>
@@ -158,6 +163,17 @@ export const ServicesSection: React.FC = () => {
                   </li>
                 ))}
               </ul>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <a
+                  href={service.mailto}
+                  data-cursor="Open your email"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-[var(--accent-code)] text-[var(--accent-ink)] text-xs sm:text-sm font-bold hover:opacity-85 transition-opacity"
+                >
+                  <span>{service.ctaLabel}</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </a>
+                <span className="text-[11px] text-[var(--text-muted)]">{service.note}</span>
+              </div>
             </Reveal>
 
             <Reveal delay={0.1} className="flex justify-center lg:flex-1">

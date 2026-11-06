@@ -69,26 +69,73 @@ export const SHOWCASE_REELS: ShowcaseReel[] = [
   },
 ];
 
-export const SERVICES = [
+export type ServiceId = 'editing' | 'social';
+
+export function buildMailto(subject: string, body: string): string {
+  return `mailto:${PERSONAL_INFO.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+// Two separate services. Clients can hire either one on its own.
+export const SERVICES: Array<{
+  id: ServiceId;
+  title: string;
+  summary: string;
+  bullets: string[];
+  note: string;
+  ctaLabel: string;
+  mailto: string;
+}> = [
   {
     id: 'editing',
-    title: 'Short-form & UGC editing',
+    title: 'Short-form video editing',
     summary: 'Send me raw footage. You get finished vertical videos, ready to post.',
     bullets: [
       'Hooks and pacing built around the first 3 seconds',
       'Animated captions, B-roll and sound design',
       'Exports for Reels, TikTok and YouTube Shorts',
     ],
+    note: 'Quoted by the number and length of videos.',
+    ctaLabel: 'Get an editing quote',
+    mailto: buildMailto(
+      'Video editing inquiry',
+      `Hi John Paulo,
+
+I'd like to hire you for short-form video editing.
+
+Brand or page:
+What kind of videos:
+How many videos (per week or month):
+Where they'll be posted:
+Deadline:
+An example video I like:
+`
+    ),
   },
   {
     id: 'social',
     title: 'Social media management',
-    summary: 'I keep your page active and consistent, so you can focus on running things.',
+    summary: 'I run one of your platforms from plan to post, so you can focus on your business.',
     bullets: [
-      'A monthly content plan built around your goals',
-      'Captions, hashtags, graphics and scheduling',
-      'A simple monthly review of what to do next',
+      'Reels, carousels and stories planned in a content calendar',
+      'Filming briefs, so your footage is easy to edit',
+      'Comment and DM replies on larger plans',
+      'Regular performance reports',
     ],
+    note: 'Monthly packages, priced per platform. Ask for the package list.',
+    ctaLabel: 'Ask for packages',
+    mailto: buildMailto(
+      'Social media management inquiry',
+      `Hi John Paulo,
+
+I'd like to know more about your social media management packages.
+
+Brand or page:
+Which platform:
+Link to the account:
+How often you post now:
+Main goal (followers, sales, leads...):
+`
+    ),
   },
 ];
 
@@ -103,35 +150,102 @@ export const AUDIENCES = [
   },
 ];
 
-export const PROCESS_STEPS = [
-  {
-    title: 'Send your brief',
-    summary: 'Share your footage or goals, a few videos you like, and where it will be posted.',
-  },
-  {
-    title: 'Agree the scope',
-    summary: 'You get the deliverables, deadline and revision rounds in writing before I start.',
-  },
-  {
-    title: 'Review the first cut',
-    summary: 'I share the draft, you leave feedback, and I make the changes.',
-  },
-  {
-    title: 'Get it ready to post',
-    summary: 'Final files in the formats you need, or scheduled for you if I run your page.',
-  },
+// Quick promises shown above the process. Kept short so clients can read them at a glance.
+export const WORK_PROMISES = [
+  { value: '< 24 hrs', label: 'First draft of an edit' },
+  { value: '2 rounds', label: 'Revisions included' },
+  { value: 'Same day', label: 'Replies to messages' },
+  { value: '1–2 weeks', label: 'Between social media reports' },
 ];
 
-export const CTA_EMAIL_SUBJECT = 'Project inquiry from your portfolio';
+export interface ProcessStep {
+  title: string;
+  when: string;
+  summary: string;
+}
 
-export const CTA_EMAIL_BODY = `Hi John Paulo,
+// Each service has its own way of working
+export const PROCESS_TRACKS: Record<ServiceId, { label: string; barLabel: string; note: string; steps: ProcessStep[] }> = {
+  editing: {
+    label: 'Video editing',
+    barLabel: 'Exporting your video',
+    note: 'The 24-hour clock starts once I have all your footage. Applies to videos up to 60 seconds.',
+    steps: [
+      {
+        title: 'Send your footage',
+        when: 'Day 1',
+        summary: 'Share your raw clips and 1 or 2 example videos in a Google Drive folder.',
+      },
+      {
+        title: 'Get your quote',
+        when: 'Same day',
+        summary: 'I confirm the price, deadline and revisions in writing before I start.',
+      },
+      {
+        title: 'First draft',
+        when: 'Under 24 hours',
+        summary: 'Your edited video, ready for you to review.',
+      },
+      {
+        title: 'Revisions',
+        when: '2 rounds included',
+        summary: 'Leave your notes and I make the changes.',
+      },
+      {
+        title: 'Final files',
+        when: 'Ready to post',
+        summary: 'Exported for Reels, TikTok or YouTube Shorts.',
+      },
+    ],
+  },
+  social: {
+    label: 'Social media',
+    barLabel: 'Scheduling your month',
+    note: 'Each package covers one platform. Reply times and report schedules depend on your package.',
+    steps: [
+      {
+        title: 'Discovery call',
+        when: 'Week 1',
+        summary: 'A 30-minute call on Zoom or Google Meet about your goals, audience and brand.',
+      },
+      {
+        title: 'Access & audit',
+        when: 'Week 1',
+        summary: "You add me as a manager on your account, and I review what's already working.",
+      },
+      {
+        title: 'Content calendar',
+        when: 'Before the month starts',
+        summary: 'Your reels, carousels and stories planned in Notion, for you to approve.',
+      },
+      {
+        title: 'Create & schedule',
+        when: 'Every week',
+        summary: 'You film, then I edit, design and schedule everything in Metricool.',
+      },
+      {
+        title: 'Report & improve',
+        when: 'Every 1–2 weeks',
+        summary: "Your results in Google Sheets, plus what we'll change next.",
+      },
+    ],
+  },
+};
 
-I'm looking for: (short-form editing / social media management / both)
-Brand or page:
-What I need:
-Timeline:
-An example video I like:
-`;
+// Logo files live in src/assets/tools, named by `logo`
+export const TOOLKIT: Array<{ name: string; logo: string }> = [
+  { name: 'CapCut', logo: 'capcut-logo.svg' },
+  { name: 'Adobe Premiere Pro', logo: 'premiere-pro.svg' },
+  { name: 'Canva', logo: 'canva.svg' },
+  { name: 'Figma', logo: 'figma.svg' },
+  { name: 'Notion', logo: 'notion.svg' },
+  { name: 'Google Sheets', logo: 'google-sheets.svg' },
+  { name: 'Metricool', logo: 'metricool.png' },
+  { name: 'Zoom', logo: 'zoom.svg' },
+  { name: 'Google Meet', logo: 'google-meet.svg' },
+];
+
+export const INSTAGRAM_DM_URL = 'https://ig.me/m/snchz_pauuu';
 
 // Timeline HUD clips, in page order. Each id matches a section on the page.
 export const SEQUENCES = [
@@ -139,6 +253,7 @@ export const SEQUENCES = [
   { id: 'cut', label: 'The cut' },
   { id: 'services', label: 'Services' },
   { id: 'process', label: 'Process' },
+  { id: 'kit', label: 'Toolkit' },
   { id: 'about', label: 'About' },
   { id: 'contact', label: 'Export' },
 ];

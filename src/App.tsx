@@ -11,6 +11,7 @@ import { CutDemo } from './components/CutDemo';
 import { KineticMarquee } from './components/KineticMarquee';
 import { ServicesSection } from './components/ServicesSection';
 import { ProcessSection } from './components/ProcessSection';
+import { ToolkitSection } from './components/ToolkitSection';
 import { AboutSection } from './components/AboutSection';
 import { CtaSection } from './components/CtaSection';
 
@@ -30,6 +31,7 @@ export function AppContent() {
         <KineticMarquee />
         <ServicesSection />
         <ProcessSection />
+        <ToolkitSection />
         <AboutSection />
         <CtaSection />
       </main>

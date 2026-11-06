@@ -213,13 +213,13 @@ const PinnedCard: React.FC<PinnedCardProps> = ({ reel, index, stage, spread, pan
 
 const HeroCopy: React.FC<{ rotatingWord: string }> = ({ rotatingWord }) => (
   <p className="font-mono text-xs sm:text-sm leading-relaxed text-[var(--text-secondary)] max-w-[420px]">
-    Hi, I'm John Paulo. I edit{' '}
+    Hi, I'm John Paulo. I edit short-form{' '}
     <span className="font-semibold text-[var(--accent-code)]">
       {rotatingWord}
       <span className="hero-caret">_</span>
     </span>
     <br />
-    and run social pages for brands &amp; creators.
+    and manage social media, as two separate services.
     <span className="block mt-1 text-[10px] sm:text-[11px] uppercase tracking-wider text-[var(--text-muted)]">
       Reels / TikTok / YouTube Shorts
     </span>
@@ -384,7 +384,7 @@ export const WorkHero: React.FC = () => {
         <motion.div style={{ opacity: headlineOpacity, y: headlineY }} className="absolute inset-x-0 top-14 px-4 sm:px-8 z-[5]">
           <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-3">
             <h1
-              className="flex-none whitespace-nowrap text-[min(15.5vw,max(36px,calc((50vh-190px)/1.72)))] xl:text-[min(15.5vw,17vh)] font-display text-[var(--text-primary)]"
+              className="flex-none whitespace-nowrap text-[min(15.5vw,max(36px,calc((50vh-240px)/1.72)))] xl:text-[min(15.5vw,17vh)] font-display text-[var(--text-primary)]"
               aria-label="Stop the scroll."
             >
               {['Stop the', 'scroll.'].map((line, i) => (
